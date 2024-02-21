@@ -27,7 +27,7 @@ https://urbanclimate.gatech.edu/
 Loading packages
 
 ```{r}
-# install.packages("tidyverse") #installs tidyverse
+#install.packages("tidyverse") #installs tidyverse
 
 library(tidyverse) #loads tidyverse
 
@@ -82,7 +82,7 @@ hist(climate_data$Baker.Building)
 
 Histogram with color
 ```{r}
-hist(climate_data$Baker.Building, col = "lightblue")
+hist(climate_data$Baker.Building, col = "red")
 ```
 
 
@@ -123,12 +123,14 @@ We can use dplyr functions to extract the data we need.
 climate_data %>% 
   select(Date.Sensor.ID, avg_campus_temp, temp_category) # creates tibble from subset of data frame
 ```
+
+
 ```{r}
 # uses subset of data to create plot
 climate_data %>% 
-  select(Date.Sensor.ID, avg_campus_temp, temp_category) %>% 
+  select(Date.Sensor.ID, Baker.Building, temp_category) %>% 
   ggplot(mapping = aes(x=Date.Sensor.ID, 
-                       y=avg_campus_temp, 
+                       y=Baker.Building, 
                        color = temp_category)) + 
   geom_point() 
 ```
@@ -197,6 +199,8 @@ climate_data %>%
   ggplot(aes(x=Date.Sensor.ID, y=Baker.Building, color = Baker.Building)) +
   geom_point() # change from within the aesthetic function
 ```
+
+
 ```{r}
 # can also set a custom color palette 
 climate_data %>% 
@@ -204,6 +208,8 @@ climate_data %>%
   scale_color_manual(values=c("#56B4E9","#F0E442","#a1b382")) +
   geom_point() 
 ```
+
+
 ```{r}
 # also packages of pre built color palettes
 library(RColorBrewer)
@@ -214,6 +220,8 @@ climate_data %>%
   geom_point()
   
 ```
+
+
 ```{r}
 # install.packages("ggsci")
 library("ggsci") # color palettes from some scientific journals
@@ -238,6 +246,8 @@ climate_data %>%
   ggplot(mapping = aes(x=Date.Sensor.ID, y=Baker.Building)) +
   geom_point(alpha=0.2)
 ```
+
+
 ```{r}
 # can set alpha based on variable value
 climate_data %>% 
@@ -277,12 +287,16 @@ climate_data %>%
   ggplot(aes(x=Date.Sensor.ID, y=Baker.Building)) +
   geom_point(aes(shape=month))
 ```
+
+
 ```{r}
 #also a list of different point shapes, numbered
 climate_data %>% 
   ggplot(aes(x=Date.Sensor.ID, y=Baker.Building, color = Baker.Building, size=Baker.Building)) +
   geom_point(shape=21)
 ```
+
+
 Fill
 
 ```{r}
@@ -290,6 +304,8 @@ climate_data %>%
   ggplot(aes(x=Date.Sensor.ID, y=Baker.Building, fill = Baker.Building, color = "red")) +
   geom_point(shape=21)
 ```
+
+
 ```{r}
 climate_data %>% 
   ggplot(aes(x=Date.Sensor.ID, y=Baker.Building)) +
@@ -331,6 +347,9 @@ climate_data %>%
   ggplot(mapping = aes(x=Baker.Building)) +
   geom_histogram()
 ```
+
+
+
 ```{r}
 climate_data %>% 
   ggplot(mapping = aes(x=Baker.Building)) +
@@ -356,6 +375,9 @@ climate_data %>%
 climate_data %>%
     ggplot(mapping = aes(x=temp_category)) +
     geom_bar()
+```
+```{r}
+
 ```
 
 
@@ -423,6 +445,8 @@ climate_data %>%
          x = "Date",
          y = "Average Temperature")
 ```
+
+
 ```{r}
 # add a caption
 climate_data %>%
@@ -433,6 +457,12 @@ climate_data %>%
          y = "Average Temperature",
          caption = "Source: Data collected by the Urban Climate Lab")
 ```
+```{r}
+# create labels for x and y axis, title, and change color of graph
+
+```
+
+
 ```{r}
 # change label for legend
 climate_data %>% 
@@ -468,9 +498,11 @@ climate_data %>%
         color = "Month") +
   theme_dark()
 ```
+
+
 ```{r}
 # can also download theme packages
-install.packages("ggthemes")
+# install.packages("ggthemes")
 library(ggthemes)
 ```
 
@@ -478,11 +510,62 @@ library(ggthemes)
 climate_data %>% 
   ggplot(aes(x=month, y=avg_campus_temp, color = month)) +
   geom_boxplot() +
-   labs(title = "Average Temperature Over the Summer",
+  labs(title = "Average Temperature Over the Summer",
          x = "Month",
          y = "Average Temperature",
          caption = "Source: Data collected by the Urban Climate Lab",
         color = "Month") +
   theme_solarized()
 ```
+
+
+```{r}
+install.packages("ggpubr")
+library(ggpubr)
+```
+
+```{r}
+bp = climate_data %>% 
+  ggplot(aes(x=month, y=avg_campus_temp, color = month)) +
+  geom_boxplot() +
+  labs(title = "Average Temperature Over the Summer",
+         x = "Month",
+         y = "Average Temperature",
+         caption = "Source: Data collected by the Urban Climate Lab",
+        color = "Month")
+```
+
+
+```{r}
+lp = climate_data %>%
+    ggplot(aes(x = Date.Sensor.ID, y=avg_campus_temp)) +
+    geom_line(color="#ff6245") +
+    labs(title = "Average Temperature Over the Summer",
+         x = "Date",
+         y = "Average Temperature",
+         caption = "Source: Data collected by the Urban Climate Lab")
+```
+
+
+```{r}
+ggarrange(bp, lp)
+```
+```{r}
+climate_data %>% 
+  ggplot(aes(x=Date.Sensor.ID))+
+  geom_line(aes(y=Baker.Building, color="Baker.Building")) +
+  geom_line(aes(y=Canopied.Walkway, color="Canopied.Walkway"))+
+  scale_y_continuous(name="Baker Building", sec.axis=sec_axis(trans = ~.,name="Canopied Walkway"))+
+  theme_economist()
+ 
+```
+```{r}
+climate_data %>% 
+  ggplot(aes(x=Date.Sensor.ID))+
+  geom_line(aes(y=Baker.Building, color="Baker.Building")) + # add the different geom layers you want to include
+  geom_point(aes(y=Canopied.Walkway, color="Canopied.Walkway"))+
+  scale_y_continuous(name="Baker Building", sec.axis=sec_axis(trans = ~.,name="Canopied Walkway"))+ # use the scale_y_continuous function to add the names of the two axes. Use sec.axis=sec_axis(trans=~., name = [Name of second axis])
+  theme_economist()
+```
+
 
